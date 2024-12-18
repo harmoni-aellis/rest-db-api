@@ -188,6 +188,8 @@ class RestAdapter(Adapter):
             response = self._session.post(self.url, params=self.query_params, headers=self.headers, json=self.body)
         else:
             response = self._session.get(self.url, params=self.query_params, headers=self.headers)
+        
+        _logger.debug(response.json());
         payload = response.json()
         parser = JSONPath(self.fragment)
         data = parser.parse(payload)
