@@ -144,10 +144,8 @@ class RestAdapter(Adapter):
         self.body = body
         self._session = get_session()
 
-        auth_header_key, auth_header_value = os.environ.get('AUTH_TOKEN').split("=")
-        whitelisted_domain =  os.environ.get('WHITE_LISTED_DOMAINS', '').split(',')
-        if base_url in whitelisted_domain:
-            self.headers.update({auth_header_key: auth_header_value})
+        authtoken = os.environ.get('AUTH_TOKEN')
+        self.headers.update({'Content-Type': 'application/json', 'authorization': authtoken})
 
         if self.is_https is None or self.is_https:
             prefix = "https://"
@@ -189,7 +187,6 @@ class RestAdapter(Adapter):
         else:
             response = self._session.get(self.url, params=self.query_params, headers=self.headers)
         
-        _logger.debug(response.json());
         payload = response.json()
         parser = JSONPath(self.fragment)
         data = parser.parse(payload)
