@@ -192,5 +192,4 @@ class RestAdapter(Adapter):
         data = parser.parse(payload)
         for i, row in enumerate(data):
             row["rowid"] = i
-            _logger.debug(row)
             yield flatten(row)
