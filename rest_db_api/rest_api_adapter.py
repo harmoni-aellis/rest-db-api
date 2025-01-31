@@ -1,7 +1,7 @@
 import urllib
 import os
 from typing import Optional, Any, Tuple, Dict, List, Iterator
-
+from flask import session
 from shillelagh.adapters.base import Adapter
 from shillelagh.fields import (
     Boolean,
@@ -144,8 +144,12 @@ class RestAdapter(Adapter):
         self.body = body
         self._session = get_session()
 
-        authtoken = os.environ.get('AUTH_TOKEN')
-        self.headers.update({'Content-Type': 'application/json', 'authorization': authtoken})
+        # Get the authtoken from either a session authtoken or an environment variable
+        authtoken = session.get('authtoken') or os.environ.get('AUTH_TOKEN')
+
+        # If authtoken is not None then set the header
+        if authtoken is not None:
+            self.headers.update({'Content-Type': 'application/json', 'authorization': authtoken})
 
         if self.is_https is None or self.is_https:
             prefix = "https://"
